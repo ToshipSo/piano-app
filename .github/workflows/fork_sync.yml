@@ -8,6 +8,9 @@ jobs:
   Auto_Sync:
     runs-on: [ubuntu-latest]
     steps:
-      - uses: TG908/fork-sync@v1.1
+      - uses: TG908/fork-sync@v1.1.4
         with:
           github_token: ${{ secrets.TOKEN }}
+          owner: ArunVenkata
+          base: master
+          head: master
