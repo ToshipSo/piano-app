@@ -1,4 +1,4 @@
-name: CI
+name: Sync
 
 on:
   schedule:
@@ -8,7 +8,6 @@ jobs:
   Auto_Sync:
     runs-on: [ubuntu-latest]
     steps:
-      - name: Sync
       - uses: TG908/fork-sync@v1.1.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
