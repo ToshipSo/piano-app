@@ -2,12 +2,13 @@ name: CI
 
 on:
   schedule:
-    - cron: '* * * * *'
+    - cron: '30 3 * * *'
 
 jobs:
   Auto_Sync:
     runs-on: [ubuntu-latest]
     steps:
+      - name: Sync
       - uses: TG908/fork-sync@v1.1.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
