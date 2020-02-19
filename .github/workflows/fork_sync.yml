@@ -1,0 +1,13 @@
+name: CI
+
+on:
+  schedule:
+    - cron: '* * * * *'
+
+jobs:
+  Auto_Sync:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: TG908/fork-sync@v1.1
+        with:
+          github_token: ${{ secrets.TOKEN }}
