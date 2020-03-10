@@ -1,14 +1,16 @@
 from django.views.generic import CreateView, View, ListView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import logout
 from django.shortcuts import redirect, render, HttpResponse
 from pages.forms import CustomUserCreationForm
 from pages.util import render_audio
 from django.utils.encoding import smart_str
-from pages.models import Record
+from pages.models import Record, CustomUser
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class SignupView(CreateView):
@@ -21,15 +23,24 @@ class HomeView(View):
     @staticmethod
     def get(request):
         if request.user.is_authenticated:
+            print(request.user.last_login)
             return redirect('piano')
         else:
             return render(request, 'index.html')
+
 
 def download(request):
     file = open('media/test.mp3', 'rb').read()
     response = HttpResponse(file)
     response['Content-Disposition'] = 'attachment; filename=test.mp3'
     return response
+
+
+def last_logout(request):
+    custom_user = CustomUser.objects.filter(user=request.user)
+    custom_user.update(last_logout=timezone.now())
+    logout(request)
+    return redirect('/')
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
@@ -57,6 +68,18 @@ class DownloadRecordings(LoginRequiredMixin, View):
             return response
         else:
             return HttpResponse("Not Authorized")
+
+
+class DeleteRecordings(LoginRequiredMixin, View):
+
+    @staticmethod
+    def get(request, pk):
+        recording = Record.objects.filter(pk=pk).first()
+        if request.user == recording.user:
+            Record.objects.filter(pk=pk).delete()
+            return redirect('recordings')
+        else:
+            return HttpResponse('Not Authorized')
 
 
 class RecordAPI(APIView):
